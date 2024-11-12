@@ -7,7 +7,7 @@ export const NodeContext = createContext();
 export const NodeProvider = ({ children }) => {
   const [nodes, setNodes] = useState([]); // Hold all nodes here
   const [edges, setEdges] = useState([]);
-  const [selectedNode, setSelectedNode] = useState(null); // New state for the selected node
+  const [selectedNode, setSelectedNode] = useState([]); // New state for the selected node
 
   const addNode = (node) => {
     setNodes((prevNodes) => [...prevNodes, node]);

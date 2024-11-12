@@ -1,92 +1,64 @@
 /* Sidebar container */
-.sidebarContainer {
-    background-color: #f4f4f4;
-    margin: 2%;
-    border-radius: 8px;
-    width: 300px;
-    max-width:100%;
-  }
-  
-  /* Message when no node is selected */
-  .noNodeSelected {
-    color: #777;
-    font-size: 14px;
-    text-align: center;
-    margin-top: 20px;
-  }
-  
-  /* Excel File Uploader */
-  .excelFileContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .excelFileHeader {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 10px;
-    text-align: center;
-  }
-  
-  /* File input styling */
-  .fileInput {
-    padding: 10px;
-    font-size: 14px;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: border-color 0.3s ease;
-  }
-  
-  .fileInput:hover {
-    border-color: #ed5729;
-  }
-  
-  .sheetSelection {
-    margin-top: 15px;
-  }
-  
-  .sheetLabel {
-    font-size: 14px;
-    color: #333;
-    margin-bottom: 5px;
-  }
-  
-  .sheetDropdown {
-    padding: 8px;
-    font-size: 14px;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    width: 100%;
-    cursor: pointer;
-    transition: border-color 0.3s ease;
-  }
-  
-  .sheetDropdown:hover {
-    border-color: #ed5729;
-  }
-  
-  /* Upload button styling */
-  .uploadButton {
-    background-color: #3906ef;
-    color: white;
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .uploadButton:hover {
-    background-color: #d15e24;
-  }
-  
-  /* Unknown Node Message */
-  .unknownNode {
-    color: #ff0000;
-    font-size: 14px;
-    text-align: center;
-  }
-  
+.sideMainBarContainer {
+  background-color: #f4f4f4;
+  margin: 2%;
+  border-radius: 8px;
+  width: 100%;
+
+}
+
+/* Header in the sidebar */
+.sideBarContainer h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* Styling the Excel uploader section */
+.excelUploader {
+  margin-top: 20px;
+  width: 80%;
+}
+
+.fileInput {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+.fileInput:hover {
+  border-color: #ed5729;
+}
+
+/* Display file info and worksheet select */
+.fileInfo {
+  margin-top: 10px;
+}
+
+.fileName {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+/* Styling the sheet selection dropdown */
+.sheetSelect {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  font-size: 14px;
+}
+
+.sheetSelect:hover {
+  border-color: #ed5729;
+}
+
+.sheetSelect:focus {
+  outline: none;
+  border-color: #ed5729;
+}

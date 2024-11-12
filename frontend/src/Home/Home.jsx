@@ -3,30 +3,28 @@ import Navbar from '../components/Navbar/Navbar';
 import Canvas from '../components/Canvas/Canvas';
 import { NodeProvider } from '../context/NodeContext';
 import "./Home.css";
+import Sidebar from '../components/Sidebar/Sidebar';
+import BottomBar from '../components/BottomBar/BottomBar';
 
 function Home() {
   return (
     <NodeProvider>
-
       <div className='mainContainer'>
         <div className='topContainer'>
           <Navbar />
         </div>
         <div className='middleContainer'>
           <div className='sideBarContainer'>
-            {/* <Sidebar /> */}
+             <Sidebar />
           </div>
           <div className='canvasContainer'>
             <Canvas />
             <div className='bottomContainer'>
-               {/* <BottomBar /> */}
+              <BottomBar />
             </div>
           </div>
-          
         </div>
-       
       </div>
-
     </NodeProvider>
   );
 }

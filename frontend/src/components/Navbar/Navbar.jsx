@@ -4,7 +4,7 @@ import { NodeContext } from '../../context/NodeContext';
 
 const Navbar = () => {
   const [activeTab, setActiveTab] = useState('');
-  const { nodes, addNode } = useContext(NodeContext);
+  const { nodes, addNode,setSelectedNode } = useContext(NodeContext);
 
   const inputOptions = [
     { id: 'excel', icon: '📊', label: 'Excel File' },
@@ -19,6 +19,7 @@ const Navbar = () => {
       type: 'default',
     };
     setActiveTab(''); // Close the dropdown
+    
     addNode(newNode); // Add node without connecting
   };
 
@@ -31,6 +32,12 @@ const Navbar = () => {
             className={`nav-button ${activeTab === 'inputs' ? 'active' : ''}`}
           >
             Inputs
+          </button>
+          <button
+          onClick={() => setActiveTab(activeTab === 'outputs' ? '' : 'outputs')}
+          className={`nav-button ${activeTab === 'outputs' ? 'active' : ''}`}
+          >
+            Outputs
           </button>
         </div>
 
