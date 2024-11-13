@@ -14,7 +14,7 @@ const Navbar = () => {
   const handleNodeOnCanvas = (id) => {
     const newNode = {
       id: `${id}-${nodes.length}`, // Create a unique id
-      label: id === 'excel' ? 'Excel File' : 'API Input',
+      label: id === 'excel' ? 'Excel File' : 'API Input' ,
       position: { x: Math.random() * 250, y: Math.random() * 250 },
       type: 'default',
     };
@@ -37,8 +37,15 @@ const Navbar = () => {
           onClick={() => setActiveTab(activeTab === 'outputs' ? '' : 'outputs')}
           className={`nav-button ${activeTab === 'outputs' ? 'active' : ''}`}
           >
+            Preparation
+          </button>
+          <button
+          onClick={() => setActiveTab(activeTab === 'outputs' ? '' : 'outputs')}
+          className={`nav-button ${activeTab === 'outputs' ? 'active' : ''}`}
+          >
             Outputs
           </button>
+        
         </div>
 
         {activeTab === 'inputs' && (

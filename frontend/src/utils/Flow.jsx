@@ -9,9 +9,9 @@ import {
   addEdge,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-
+import CustomNode from '../utils/CustomNode';
 function Flow() {
-    const { nodes, setNodes, edges, setEdges, setSelectedNode } = useContext(NodeContext);
+   const { nodes, setNodes, edges, setEdges, setSelectedNode } = useContext(NodeContext);
   
   const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -32,20 +32,24 @@ function Flow() {
   const onNodeClick = (_, node) => {
     setSelectedNode(node);
   };
-
+  const nodeTypes = {
+    customNode: CustomNode, // Register your custom node
+  };
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <ReactFlow
+        
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onNodeClick={onNodeClick}
+        nodeTypes={nodeTypes}
         fitView
       >
         <Controls />
-        <Background color="#aaa" gap={16} />
+        <Background color="#aaa" gap={16}  />
       </ReactFlow>
     </div>
   );

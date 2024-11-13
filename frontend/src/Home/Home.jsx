@@ -5,10 +5,12 @@ import { NodeProvider } from '../context/NodeContext';
 import "./Home.css";
 import Sidebar from '../components/Sidebar/Sidebar';
 import BottomBar from '../components/BottomBar/BottomBar';
+import { ExcelDataContext, ExcelDataProvider } from '../context/ExcelDataContext';
 
 function Home() {
   return (
     <NodeProvider>
+     <ExcelDataProvider >
       <div className='mainContainer'>
         <div className='topContainer'>
           <Navbar />
@@ -20,11 +22,12 @@ function Home() {
           <div className='canvasContainer'>
             <Canvas />
             <div className='bottomContainer'>
-              <BottomBar />
+               <BottomBar />
             </div>
           </div>
         </div>
       </div>
+      </ExcelDataProvider>
     </NodeProvider>
   );
 }
