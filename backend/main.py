@@ -1,7 +1,8 @@
-from fastapi import FastAPI, UploadFile, Form
+from fastapi import FastAPI, UploadFile, Form, HTTPException
 from pydantic import BaseModel
 import pandas as pd
 from fastapi.middleware.cors import CORSMiddleware
+import sqlalchemy as sa
 
 app = FastAPI()
 
@@ -29,3 +30,29 @@ async def upload_excel(file: UploadFile, sheet_name: str = Form(...)):
         "header": header,
         "rows": rows
     }
+
+@app.post("/check-mssql-connection")
+def connect_to_sql_server(request: dict):
+    username = request.get("username")
+    password = request.get("password")
+    server_name = request.get("serverName")
+
+    # Connection string
+    conn_string = f"mssql+pyodbc://{username}:{password}@{server_name}/master?driver=ODBC+Driver+17+for+SQL+Server"
+
+    # Create the engine
+    engine = sa.create_engine(conn_string)
+
+    try:
+        # Test the connection
+        with engine.connect() as conn:
+            # Get a list of databases
+            result = conn.execute(sa.text("SELECT name FROM sys.databases"))
+            databases = [row[0] for row in result]
+
+        return {
+            "connectionStatus": "success",
+            "databases": databases
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
