@@ -1,8 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { NodeContext } from '../../context/NodeContext';
 import { ExcelDataContext } from '../../context/ExcelDataContext';
-import './ExcelUploader.css'; // Adjust the path based on your project structure
-
+import './ExcelUploader.css'; 
 import * as XLSX from 'xlsx';
 
 function ExcelUploader() {
