@@ -51,7 +51,7 @@ function ExcelUploader() {
 
   return (
     <div className='excelMainContainer'>
-      {selectedNode.label === 'Excel File' && (
+
         <div className="excelUploader">
           <input
             type="file"
@@ -76,7 +76,7 @@ function ExcelUploader() {
             </div>
           )}
         </div>
-      )}
+
     </div>
   );
 }

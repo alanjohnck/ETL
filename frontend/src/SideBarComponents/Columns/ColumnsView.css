@@ -1,0 +1,74 @@
+/* Main container styling */
+.columnSideBarContainer {
+    width: 250px;
+    padding: 16px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  
+  }
+  
+  /* Title styling */
+  .columnSideBarContainer h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #333;
+  }
+  
+  /* Column row styling */
+  .column-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  
+  /* Column name styling */
+  .column-name {
+    flex: 1;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  /* Dropdown styling */
+  .data-type-dropdown {
+    flex: 1;
+    padding: 6px 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+  }
+  
+  /* Confirm button styling */
+  .confirm-button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  
+  .confirm-button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Additional styles for hover and focus */
+  .data-type-dropdown:hover {
+    border-color: #007bff;
+  }
+  
+  .data-type-dropdown:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  

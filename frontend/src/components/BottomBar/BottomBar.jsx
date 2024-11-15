@@ -7,7 +7,7 @@ function BottomBar() {
   const { excelData } = useContext(ExcelDataContext);
 
   // Check if excelData is available and has content
-  if (!excelData || excelData.length === 0) return <p>No data available</p>;
+  if (!excelData || excelData.length === 0) return <p>No data available.Select the inputs</p>;
 
   // Extract the header (first row) and data (subsequent rows)
   const headers = excelData[0]; // Assuming the first row is the header

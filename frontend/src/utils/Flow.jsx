@@ -29,16 +29,19 @@ function Flow() {
     (params) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
   );
+
   const onNodeClick = (_, node) => {
     setSelectedNode(node);
+    console.log(edges);
   };
+
   const nodeTypes = {
     customNode: CustomNode, // Register your custom node
   };
+
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <ReactFlow
-        
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
@@ -46,10 +49,11 @@ function Flow() {
         onConnect={onConnect}
         onNodeClick={onNodeClick}
         nodeTypes={nodeTypes}
-        fitView
+      
+     
       >
         <Controls />
-        <Background color="#aaa" gap={16}  />
+        <Background variant='lines' color="#fff" gap={26} size={3}  />
       </ReactFlow>
     </div>
   );

@@ -1,0 +1,33 @@
+.custom-node {
+    padding: 5px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    background-color: white;
+    width: auto; /* Adjusted for the image */
+    text-align: center;
+  }
+  
+  .node-label {
+    font-weight: medium;
+    color:grey ;
+    font-size: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .node-image {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .node-image img {
+    width: 30px; /* Adjust size of the image */
+    height: 30px;
+    object-fit: cover; /* Ensure the image covers the space without distortion */
+  }
+  
+  .handle {
+    background-color: #ddd; /* Optional: Style for the handle */
+    border-radius: 50%;
+  }
+  
