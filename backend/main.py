@@ -36,7 +36,7 @@ def connect_to_sql_server(request: dict):
     username = request.get("username")
     password = request.get("password")
     server_name = request.get("serverName")
-
+    
     # Connection string
     conn_string = f"mssql+pyodbc://{username}:{password}@{server_name}/master?driver=ODBC+Driver+17+for+SQL+Server"
 

@@ -12,10 +12,10 @@ function ToMsqlDatabase() {
   // Function to handle the connection form submission
   const handleConnect = async () => {
     try {
-      const response = await axios.post('/check-mssql-connection', {
-        serverName,
+      const response = await axios.post('http://localhost:8000/check-mssql-connection', {
         username,
-        password
+        password,
+        serverName
       });
 
       if (response.data.connectionStatus === 'success') {
