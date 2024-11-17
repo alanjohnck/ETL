@@ -15,7 +15,7 @@ function ToMssqlDatabase() {
   const [createIfNotExists, setCreateIfNotExists] = useState(true);
   const [connectionStatus, setConnectionStatus] = useState('');
   const [databases, setDatabases] = useState([]);
-  const [importStatus, setImportStatus] = useState('');
+  const [importStatus, setImportStatus] = useState('import data to mssql');
 
   const { columnConfig } = useContext(ExcelDataContext);  
 
@@ -33,7 +33,7 @@ function ToMssqlDatabase() {
         setDatabases(response.data.databases);
       }
     } catch (error) {
-      setConnectionStatus(`Connection failed: ${error.response?.data?.detail || error.message}`);
+      setConnectionStatus(`Connection failed`);
     }
   };
 
@@ -104,7 +104,7 @@ function ToMssqlDatabase() {
       </div>
 
       {connectionStatus && <p className="statusMessage">{connectionStatus}</p>}
-
+    <div className='mssqlDetailForm'>
       <div className="mssqlDatabases">
         <h4 className="databaseHeader">Available Databases</h4>
         <select
@@ -155,9 +155,10 @@ function ToMssqlDatabase() {
           Create If Not Exists
         </label>
       </div>
-
-      <button className="primaryButton" onClick={handleImportData}>Import Data</button>
-      {importStatus && <p className="statusMessage">{importStatus}</p>}
+    </div>
+      <button className="primaryButton" onClick={handleImportData}>
+         {importStatus && <p>{importStatus}</p>}
+      </button>
     </div>
   );
 }

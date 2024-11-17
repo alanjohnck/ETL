@@ -29,7 +29,7 @@
   }
   
   .inputField {
-    width: 100%;
+    width: 90%;
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 5px;
@@ -40,7 +40,7 @@
   .primaryButton {
     width: 100%;
     padding: 10px;
-    background-color: #3329be;
+    background-color: #0000FF;
     color: white;
     border: none;
     border-radius: 5px;
@@ -49,10 +49,17 @@
   
   .statusMessage {
     margin-top: 10px;
-    color: #ff5722;
+    color: #19f024;
     font-weight: bold;
   }
-  
+  .mssqlDetailForm{
+    width: 90%;
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
   .mssqlDatabases {
     width: 100%;
     margin-bottom: 20px;
