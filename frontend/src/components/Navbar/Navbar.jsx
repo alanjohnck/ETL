@@ -24,7 +24,7 @@ const Navbar = () => {
   // Handler to add nodes to canvas with the correct image
   const handleNodeOnCanvas = (id, label, image) => {
     const newNode = {
-      id: `${id}-${nodes.length}`, // Create a unique id
+      id: `${id}`, // Create a unique id
       label: label,
       position: { x: Math.random() * 250, y: Math.random() * 250 },
       image: image, // Use the provided image URL
