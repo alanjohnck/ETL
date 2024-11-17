@@ -1,10 +1,10 @@
-from fastapi import FastAPI, UploadFile, Form, HTTPException
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-import pandas as pd
 from fastapi.middleware.cors import CORSMiddleware
+import pandas as pd
 import sqlalchemy as sa
-from typing import Dict, Optional, List, Any
 from sqlalchemy import create_engine, types, inspect
+from typing import Dict, Optional, List, Any
 
 app = FastAPI()
 
@@ -16,35 +16,34 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Global storage for uploaded data
+uploaded_data = []
+
 class ExcelDataChunk(BaseModel):
     data: List[List[Any]]
 
-# In-memory storage for received data
-uploaded_data = []
+class DbConfig(BaseModel):
+    username: str
+    password: str
+    server: str
+    databaseName: str
+    schemaName: str
+    tableName: str
 
-@app.post("/clear-data")
-async def clear_data():
-    """Clear all previously uploaded data"""
-    global uploaded_data
-    uploaded_data = []
-    return {"status": "success", "message": "Data cleared successfully"}
+class Options(BaseModel):
+    dropAndCreate: bool
+    deleteExistingData: bool
+    createIfNotExists: bool
 
-@app.post("/upload-excel-chunk")
-async def upload_excel_chunk(chunk: ExcelDataChunk):
-    try:
-        # Process the chunk data
-        uploaded_data.extend(chunk.data)
-        return {
-            "status": "success",
-            "message": f"Received chunk with {len(chunk.data)} rows.",
-            "total_rows": len(uploaded_data)
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+class ColumnType(BaseModel):
+    header: str
+    userSelected: str
+    mssqlType: str
 
-@app.get("/get-uploaded-data")
-async def get_uploaded_data():
-    return {"uploaded_data": uploaded_data}
+class ImportDataRequest(BaseModel):
+    dbConfig: DbConfig
+    options: Options
+    columnConfig: List[Dict[str, str]]
 
 @app.post("/check-mssql-connection")
 def connect_to_sql_server(request: dict):
@@ -74,125 +73,158 @@ def connect_to_sql_server(request: dict):
     
     
 
+uploaded_data = []  # Temporary storage for uploaded data
 
+# Define request models
+class ExcelDataChunk(BaseModel):
+    data: List[List[Any]]
 
-
-
-
-
-class DatabaseConfig(BaseModel):
-    server: str = "localhost\\SQLEXPRESS"
-    database_name: str
+class DbConfig(BaseModel):
     username: str
     password: str
-    schema_name: str = "dbo"
-    table_name: str
-    create_if_not_exists: bool = True  # Matches "Create Table If Not Exist" checkbox
-    drop_and_create: bool = False      # Matches "Drop Table Then Create" checkbox
-    delete_existing_data: bool = False  # Matches "Delete Existing Data" checkbox
+    server: str
+    databaseName: str
+    schemaName: str
+    tableName: str
 
-class ColumnConfig(BaseModel):
-    type: str
-    params: Optional[Dict] = None
+class Options(BaseModel):
+    dropAndCreate: bool
+    deleteExistingData: bool
+    createIfNotExists: bool
+
+class ColumnConfigItem(BaseModel):
+    header: str
+    userSelected: str
+    mssqlType: str
 
 class ImportDataRequest(BaseModel):
-    db_config: DatabaseConfig
-    column_config: Dict[str, ColumnConfig]
+    dbConfig: DbConfig
+    options: Options
+    columnConfig: List[Dict[str, str]]
 
-def get_sqlalchemy_type(column_type: ColumnConfig):
+# Function to get SQLAlchemy data type based on MSSQL type
+def get_sqlalchemy_type(mssql_type: str):
     type_mapping = {
-        "INTEGER": types.INTEGER,
-        "VARCHAR": types.VARCHAR,
-        "DECIMAL": types.DECIMAL,
-        "FLOAT": types.FLOAT,
-        "DATE": types.DATE,
-        "DATETIME": types.DATETIME,
-        "BOOLEAN": types.BOOLEAN,
-        "TEXT": types.TEXT
+        'VARCHAR(MAX)': types.Text,
+        'INT': types.Integer,
+        'DECIMAL': types.DECIMAL,
+        'FLOAT': types.Float,
+        'DATE': types.Date,
+        'DATETIME': types.DateTime,
+        'BIT': types.Boolean,
     }
-    try:
-        if column_type.params:
-            return type_mapping[column_type.type](**column_type.params)
-        else:
-            return type_mapping[column_type.type]()
-    except TypeError as e:
-        raise HTTPException(status_code=400, detail=f"Invalid parameters for type {column_type.type}: {e}")
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error creating SQLAlchemy type: {e}")
+    
+    # Handle VARCHAR with specific length
+    if mssql_type.startswith('VARCHAR(') and mssql_type != 'VARCHAR(MAX)':
+        length = int(mssql_type[8:-1])
+        return types.String(length=length)
+    
+    # Default to Text type
+    return type_mapping.get(mssql_type, types.Text)
 
-def table_exists(engine, schema, table):
-    inspector = inspect(engine)
-    return table in inspector.get_table_names(schema=schema)
-
-@app.post("/import-data-to-mssql/")
+@app.post("/import-data-to-mssql")
 async def import_data(request: ImportDataRequest):
-    engine = None
     try:
-        sqlalchemy_types = {col: get_sqlalchemy_type(request.column_config[col]) for col in request.column_config}
-        data = pd.read_csv("exp3.csv")   #this csv
-        data = data[list(request.column_config.keys())]
+        # Ensure data is uploaded
+        if not uploaded_data:
+            raise HTTPException(status_code=400, detail="No data has been uploaded")
         
+        # Convert uploaded data to DataFrame, skip header row
+        df = pd.DataFrame(uploaded_data[1:], columns=[col['header'].strip() for col in request.columnConfig])
+        
+        # Data Cleaning
+        for config in request.columnConfig:
+            header = config['header'].strip()
+            userSelectedType = config['userSelected']
+            mssqlType = config['mssqlType']
+            
+            # Convert numeric columns to appropriate types
+            if userSelectedType in ['Integer', 'Double']:
+                df[header] = pd.to_numeric(df[header], errors='coerce')
+            elif userSelectedType == 'Boolean':
+                df[header] = df[header].map({'True': True, 'False': False, '1': True, '0': False}).astype(bool)
+        
+        # Handle Year column as an example of Integer conversion
+        if 'Year' in df.columns:
+            df['Year'] = pd.to_numeric(df['Year'], errors='coerce')  # Convert Year to numeric
+            df.dropna(subset=['Year'], inplace=True)  # Drop rows where Year is NaN
+            df['Year'] = df['Year'].astype(int)  # Convert back to integer
+        
+        # Create column mapping for SQLAlchemy
+        column_types = {config['header'].strip(): get_sqlalchemy_type(config['mssqlType']) for config in request.columnConfig}
+
+        # Connection string for MSSQL
         conn_string = (
-            f"mssql+pyodbc://{request.db_config.username}:{request.db_config.password}"
-            f"@{request.db_config.server}/{request.db_config.database_name}?"
-            "driver=ODBC+Driver+17+for+SQL+Server"
+            f"mssql+pyodbc://{request.dbConfig.username}:{request.dbConfig.password}"
+            f"@{request.dbConfig.server}/{request.dbConfig.databaseName}?driver=ODBC+Driver+17+for+SQL+Server"
         )
+        
+        # Initialize SQLAlchemy engine
         engine = create_engine(conn_string)
         
-        # Determine if_exists behavior based on config options
-        if_exists = 'fail'  # default behavior
+        # Determine behavior based on options
+        if_exists = 'fail'
+        if request.options.dropAndCreate:
+            if_exists = 'replace'
+        elif request.options.deleteExistingData:
+            with engine.connect() as connection:
+                connection.execute(sa.text(
+                    f"DELETE FROM {request.dbConfig.schemaName}.{request.dbConfig.tableName}"
+                ))
+            if_exists = 'append'
+        elif request.options.createIfNotExists:
+            if_exists = 'append'
         
-        table_check = table_exists(engine, request.db_config.schema_name, request.db_config.table_name)
+        # Print debug information
+        print("DataFrame before uploading:")
+        print(df.head())
+        print("Column types mapping:", column_types)
         
-        if table_check:
-            if request.db_config.drop_and_create:
-                if_exists = 'replace'
-            elif request.db_config.delete_existing_data:
-                # Delete existing data but keep the table structure
-                with engine.connect() as connection:
-                    connection.execute(f"DELETE FROM {request.db_config.schema_name}.{request.db_config.table_name}")
-                if_exists = 'append'
-            elif request.db_config.create_if_not_exists:
-                if_exists = 'append'
-            else:
-                raise HTTPException(
-                    status_code=400,
-                    detail="Table already exists and no action specified"
-                )
-        else:
-            if request.db_config.create_if_not_exists:
-                if_exists = 'replace'  # Will create new table
-            else:
-                raise HTTPException(
-                    status_code=404,
-                    detail="Table does not exist and create_if_not_exists is False"
-                )
-        
-        data.to_sql(
-            name=request.db_config.table_name,
+        # Upload DataFrame to MSSQL table
+        df.to_sql(
+            name=request.dbConfig.tableName,
             con=engine,
             if_exists=if_exists,
             index=False,
-            schema=request.db_config.schema_name,
-            dtype=sqlalchemy_types
+            schema=request.dbConfig.schemaName,
+            dtype=column_types
         )
         
+        # Return success response
         return {
             "status": "success",
-            "message": f"Imported {len(data)} rows to {request.db_config.table_name}",
+            "message": f"Successfully imported {len(df)} rows",
             "details": {
-                "server": request.db_config.server,
-                "database": request.db_config.database_name,
-                "schema": request.db_config.schema_name,
-                "table": request.db_config.table_name,
-                "action_taken": if_exists,
-                "columns": {col: str(sqlalchemy_types[col]) for col in request.column_config}
+                "table": request.dbConfig.tableName,
+                "schema": request.dbConfig.schemaName,
+                "database": request.dbConfig.databaseName,
+                "columns": list(column_types.keys())
             }
         }
-    except HTTPException:
-        raise
+        
+    except Exception as e:
+        # Detailed error logging
+        print("Error details:", str(e))
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/upload-excel-chunk")
+async def upload_excel_chunk(chunk: ExcelDataChunk):
+    try:
+        uploaded_data.extend(chunk.data)
+        return {
+            "status": "success",
+            "message": f"Received chunk with {len(chunk.data)} rows.",
+            "total_rows": len(uploaded_data)
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        if engine is not None:
-            engine.dispose()    
+
+@app.post("/clear-data")
+async def clear_data():
+    global uploaded_data
+    uploaded_data = []
+    return {"status": "success", "message": "Data cleared successfully"}
+
+@app.get("/get-uploaded-data")
+async def get_uploaded_data():
+    return {"uploaded_data": uploaded_data}

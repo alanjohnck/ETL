@@ -13,10 +13,10 @@ function Sidebar() {
   }, [edges]);
 
   const isEdgeFromExcelToColumns = () => {
-    return edges.some(edge => edge.source === 'excel-0' && edge.target === 'columns-1');
+    return edges.some(edge => edge.source === 'excel' && edge.target === 'columns');
   };
   const isEdgeFromColumnsToMssql = () => {
-    return edges.some(edge => edge.source === 'columns-1' && edge.target === 'mssql-2');
+    return edges.some(edge => edge.source === 'columns' && edge.target === 'mssql');
   };
 
   return (
@@ -32,8 +32,14 @@ function Sidebar() {
         )
       )}
       {selectedNode && selectedNode.label === 'MSSQL' && (
+        isEdgeFromColumnsToMssql() ? (
+
         <ToMsqlDatabase />
+        ) : (
+          <p>Please connect the Columns node to the MSSQL node.</p>
+
         )  
+      )
       }
     </div>
   );

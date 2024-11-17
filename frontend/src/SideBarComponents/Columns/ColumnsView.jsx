@@ -40,7 +40,7 @@ function ColumnsView() {
   // Function to log selected headers and MSSQL datatypes
   const handleConfirm = () => {
     const mappedDataTypes = headers.map((header) => ({
-      header,
+      header: header,
       userSelected: selectedDataTypes[header] || 'String',
       mssqlType: getMssqlType(selectedDataTypes[header] || 'String'),
     }));
