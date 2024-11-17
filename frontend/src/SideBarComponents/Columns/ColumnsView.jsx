@@ -4,7 +4,7 @@ import { ExcelDataContext } from '../../context/ExcelDataContext';
 
 function ColumnsView() {
   const { excelData } = useContext(ExcelDataContext);
-
+  const {setColumnConfig} = useContext(ExcelDataContext);
   // Define user-friendly and corresponding MSSQL datatype mappings
   const dataTypeOptions = [
     { label: 'String', mssqlType: 'VARCHAR(MAX)' },
@@ -46,6 +46,7 @@ function ColumnsView() {
     }));
 
     console.log('Selected Data Types:', mappedDataTypes);
+    setColumnConfig(mappedDataTypes);
   };
 
   return (

@@ -1,17 +1,25 @@
 import React from 'react';
 import './BottomBar.css';
 import { ExcelDataContext } from '../../context/ExcelDataContext';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 function BottomBar() {
   const { excelData } = useContext(ExcelDataContext);
+  const [limitedData, setLimitedData] = useState([]); // State for 50 rows
 
-  // Check if excelData is available and has content
-  if (!excelData || excelData.length === 0) return <p>No data available.Select the inputs</p>;
+
+  useEffect(() => {
+    if (!excelData || excelData.length === 0) return;
+
+    // Extract 50 rows for limited display
+    const displayRows = excelData.slice(0, 10); // Includes header + 50 rows
+    setLimitedData(displayRows);
+  }, [excelData]); 
+  if (!limitedData || limitedData.length === 0) return <p>No data available. Select the inputs</p>;
 
   // Extract the header (first row) and data (subsequent rows)
-  const headers = excelData[0]; // Assuming the first row is the header
-  const dataRows = excelData.slice(1); // Remaining rows are data
+  const headers = limitedData[0]; // Assuming the first row is the header
+  const dataRows = limitedData.slice(1); // Remaining rows are data
 
   return (
     <div className='bottomBarContainer'>

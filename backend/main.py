@@ -3,35 +3,48 @@ from pydantic import BaseModel
 import pandas as pd
 from fastapi.middleware.cors import CORSMiddleware
 import sqlalchemy as sa
-from typing import Dict, Optional
+from typing import Dict, Optional, List, Any
 from sqlalchemy import create_engine, types, inspect
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
-class ExcelData(BaseModel):
-    file: bytes
-    sheet_name: str
 
-@app.post("/upload-excel")
-async def upload_excel(file: UploadFile, sheet_name: str = Form(...)):
-    # Read the Excel file from the request
-    df = pd.read_excel(await file.read(), sheet_name=sheet_name)
+class ExcelDataChunk(BaseModel):
+    data: List[List[Any]]
 
-    # Get the first 10 rows and the header
-    header = list(df.columns)
-    rows = df.head(10).to_dict('records')
+# In-memory storage for received data
+uploaded_data = []
 
-    return {
-        "header": header,
-        "rows": rows
-    }
+@app.post("/clear-data")
+async def clear_data():
+    """Clear all previously uploaded data"""
+    global uploaded_data
+    uploaded_data = []
+    return {"status": "success", "message": "Data cleared successfully"}
+
+@app.post("/upload-excel-chunk")
+async def upload_excel_chunk(chunk: ExcelDataChunk):
+    try:
+        # Process the chunk data
+        uploaded_data.extend(chunk.data)
+        return {
+            "status": "success",
+            "message": f"Received chunk with {len(chunk.data)} rows.",
+            "total_rows": len(uploaded_data)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/get-uploaded-data")
+async def get_uploaded_data():
+    return {"uploaded_data": uploaded_data}
 
 @app.post("/check-mssql-connection")
 def connect_to_sql_server(request: dict):

@@ -18,7 +18,7 @@ const Navbar = () => {
   ];
 
   const outputOptions = [
-    { id: 'output', icon: '📤', image: './mssql.png', label: 'MSSQL' },
+    { id: 'mssql', icon: '📤', image: './mssql.png', label: 'MSSQL' },
   ];
 
   // Handler to add nodes to canvas with the correct image
