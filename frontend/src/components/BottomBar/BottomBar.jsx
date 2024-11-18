@@ -12,10 +12,10 @@ function BottomBar() {
     if (!excelData || excelData.length === 0) return;
 
     // Extract 50 rows for limited display
-    const displayRows = excelData.slice(0, 10); // Includes header + 50 rows
+    const displayRows = excelData.slice(0, 10); 
     setLimitedData(displayRows);
   }, [excelData]); 
-  if (!limitedData || limitedData.length === 0) return <p>No data available. Select the inputs</p>;
+  if (!limitedData || limitedData.length === 0) return <p className='selectTheInput'>No data available. Select the inputs</p>;
 
   // Extract the header (first row) and data (subsequent rows)
   const headers = limitedData[0]; // Assuming the first row is the header

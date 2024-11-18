@@ -1,10 +1,12 @@
 /* Main container styling */
 .columnSideBarContainer {
     width: 250px;
-    padding: 16px;
+    padding: 20px;
     background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 2%;
+    height: 100%;
   
   }
   
@@ -19,16 +21,16 @@
   /* Column row styling */
   .column-row {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
     margin-bottom: 12px;
   }
   
   /* Column name styling */
   .column-name {
-    flex: 1;
     font-size: 14px;
     color: #555;
+    margin-bottom: 8px;
+    word-wrap: break-word;
   }
   
   /* Dropdown styling */
@@ -56,7 +58,10 @@
     font-size: 16px;
     font-weight: 600;
   }
-  
+  .confirm-button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+  }
   .confirm-button:hover {
     background-color: #0000FF;
   }
@@ -70,5 +75,15 @@
     outline: none;
     border-color: #0000FF;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  .selectTheData{
+    padding: 10px;
+    color: green;
+    background-color: #f8d7da; /* Light red background */
+    border: 1px solid #f5c6cb; /* Red border */
+    border-radius: 4px; /* Rounded corners */
+    margin: 10px 0; /* Margin for spacing */
+    font-weight: bold; /* Bold text */
+    text-align: center;
   }
   

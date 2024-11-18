@@ -11,8 +11,9 @@ import {
 import '@xyflow/react/dist/style.css';
 import CustomNode from '../utils/CustomNode';
 function Flow() {
-   const { nodes, setNodes, edges, setEdges, setSelectedNode } = useContext(NodeContext);
-  
+  const { nodes, setNodes, edges, setEdges, setSelectedNode } = useContext(NodeContext);
+  const proOptions = { hideAttribution: true };
+
   const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
     [setNodes]
@@ -49,7 +50,7 @@ function Flow() {
         onConnect={onConnect}
         onNodeClick={onNodeClick}
         nodeTypes={nodeTypes}
-      
+        proOptions={proOptions}
      
       >
         <Controls />

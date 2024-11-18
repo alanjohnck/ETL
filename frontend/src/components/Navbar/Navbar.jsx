@@ -10,7 +10,6 @@ const Navbar = () => {
   // Define input, preparation, and output options
   const inputOptions = [
     { id: 'excel', icon: <FileSpreadsheet />, image: './excel.png', label: 'Excel File' },
-    { id: 'api', icon: '🔗', image: './api.png', label: 'API Input' },
   ];
 
   const preparationOptions = [

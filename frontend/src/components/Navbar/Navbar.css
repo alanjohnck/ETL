@@ -59,12 +59,15 @@
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
                 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     border: 1px solid #e5e7eb;
+    width: 10vw;
+    height: fit-content;
     padding: 1rem;
     z-index: 10;
   }
   
   .input-options-grid {
     display: flex;
+    justify-content: center;
     gap: 1rem;
     width: 100%;
   }

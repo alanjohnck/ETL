@@ -5,7 +5,7 @@ import { NodeProvider } from '../context/NodeContext';
 import "./Home.css";
 import Sidebar from '../components/Sidebar/Sidebar';
 import BottomBar from '../components/BottomBar/BottomBar';
-import { ExcelDataContext, ExcelDataProvider } from '../context/ExcelDataContext';
+import {  ExcelDataProvider } from '../context/ExcelDataContext';
 
 function Home() {
   return (

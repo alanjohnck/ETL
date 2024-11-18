@@ -5,6 +5,8 @@ import { ExcelDataContext } from '../../context/ExcelDataContext';
 function ColumnsView() {
   const { excelData } = useContext(ExcelDataContext);
   const {setColumnConfig} = useContext(ExcelDataContext);
+  const [isConfirmed, setIsConfirmed] = useState(false); // State to track confirmation
+
   // Define user-friendly and corresponding MSSQL datatype mappings
   const dataTypeOptions = [
     { label: 'String', mssqlType: 'VARCHAR(MAX)' },
@@ -18,7 +20,7 @@ function ColumnsView() {
   const [selectedDataTypes, setSelectedDataTypes] = useState({});
 
   // Check if excelData is available and has content
-  if (!excelData || excelData.length === 0) return <p>No data available</p>;
+  if (!excelData || excelData.length === 0) return <p className='selectTheData'>No data available.Upload the Excel file</p>;
 
   // Extract the header (first row)
   const headers = excelData[0];
@@ -47,6 +49,8 @@ function ColumnsView() {
 
     console.log('Selected Data Types:', mappedDataTypes);
     setColumnConfig(mappedDataTypes);
+    setIsConfirmed(true); // Set confirmation state to true
+
   };
 
   return (
@@ -59,6 +63,8 @@ function ColumnsView() {
             className='data-type-dropdown'
             value={selectedDataTypes[header] || 'String'}
             onChange={(e) => handleDataTypeChange(header, e.target.value)}
+            disabled={isConfirmed} // Disable the select if confirmed
+
           >
             {dataTypeOptions.map((option) => (
               <option key={option.label} value={option.label}>
@@ -69,8 +75,12 @@ function ColumnsView() {
         </div>
       ))}
 
-      <button className='confirm-button' onClick={handleConfirm}>
-        Confirm Selection
+      <button
+        className='confirm-button'
+        onClick={handleConfirm}
+        disabled={isConfirmed} // Disable the button if confirmed
+      >
+        {isConfirmed ? 'Confirmed' : 'Confirm Selection'}
       </button>
     </div>
   );

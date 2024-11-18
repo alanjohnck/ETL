@@ -8,3 +8,14 @@
     max-height: 85vh; /* Set the max height to control when scrolling starts */
     overflow-y: auto; /* Enable vertical scrolling */
 }
+
+.selectThePrev{
+    padding: 10px;
+    color: green;
+    background-color: #f8d7da; /* Light red background */
+    border: 1px solid #f5c6cb; /* Red border */
+    border-radius: 4px; /* Rounded corners */
+    margin: 10px 0; /* Margin for spacing */
+    font-weight: bold; /* Bold text */
+    text-align: center; /* Center the text */
+}

@@ -52,7 +52,7 @@ function ExcelUploader() {
   // Clear previous data from backend before starting new upload
   const clearPreviousData = async () => {
     try {
-      await fetch('http://localhost:8000/clear-data', {
+      await fetch('https://etl-t4x8.onrender.com/clear-data', {
         method: 'POST',
       });
     } catch (error) {
@@ -62,7 +62,7 @@ function ExcelUploader() {
 
   const sendDataToServer = async (dataChunk, currentChunk, totalChunks) => {
     try {
-      const response = await fetch('http://localhost:8000/upload-excel-chunk', {
+      const response = await fetch('https://etl-t4x8.onrender.com/upload-excel-chunk', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ data: dataChunk }),

@@ -28,19 +28,17 @@ function Sidebar() {
         isEdgeFromExcelToColumns() ? (
           <ColumnsView />
         ) : (
-          <p>Please connect the Excel node to the Columns node.</p>
+          <p className='selectThePrev'>Please connect the Excel node to the Columns node.</p>
         )
       )}
       {selectedNode && selectedNode.label === 'MSSQL' && (
         isEdgeFromColumnsToMssql() ? (
-
         <ToMsqlDatabase />
         ) : (
-          <p>Please connect the Columns node to the MSSQL node.</p>
-
+          <p className='selectThePrev'>Please connect the Columns node to the MSSQL node.</p>
         )  
       )
-      }
+     }
     </div>
   );
 }

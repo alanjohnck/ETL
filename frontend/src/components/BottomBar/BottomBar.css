@@ -2,14 +2,22 @@
   width: 100%;
   height: 200px; /* Adjust the height as needed */
   overflow: auto; /* Enable both vertical and horizontal scrolling */
-  border: 1px solid #ccc; /* Optional: Add a border for better visibility */
 }
 
 .scrollableContent {
   width: 1000px; /* Set a width larger than the container to enable horizontal scrolling */
   height: 1000px; /* Set a height larger than the container to enable vertical scrolling */
 }
-
+.selectTheInput {
+  padding: 10px;
+  color: green;
+  background-color: #f8d7da; /* Light red background */
+  border: 1px solid #f5c6cb; /* Red border */
+  border-radius: 4px; /* Rounded corners */
+  margin: 10px 0; /* Margin for spacing */
+  font-weight: bold; /* Bold text */
+  text-align: center; /* Center the text */
+}
 table {
   width: 100%;
   border-collapse: collapse;
