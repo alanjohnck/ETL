@@ -21,17 +21,17 @@ function Sidebar() {
 
   return (
     <div className="sideMainBarContainer">
-      {selectedNode && selectedNode.label === 'Excel File' && (
+      {selectedNode && selectedNode.data.label === 'Excel File' && (
         <ExcelUploader />
       )}
-      {selectedNode && selectedNode.label === 'Columns' && (
+      {selectedNode && selectedNode.data.label === 'Columns' && (
         isEdgeFromExcelToColumns() ? (
           <ColumnsView />
         ) : (
           <p>Please connect the Excel node to the Columns node.</p>
         )
       )}
-      {selectedNode && selectedNode.label === 'MSSQL' && (
+      {selectedNode && selectedNode.data.label === 'MSSQL' && (
         isEdgeFromColumnsToMssql() ? (
 
         <ToMsqlDatabase />

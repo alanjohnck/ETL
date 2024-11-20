@@ -1,12 +1,16 @@
 // FileUpload.js
 import React, { useState } from "react";
 import Home from "./Home/Home";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 function App() {
 
  return(
     <>
-      <Home /> 
+     <DndProvider backend={HTML5Backend}>
+        <Home /> 
+    </DndProvider>
     </>
  );
 

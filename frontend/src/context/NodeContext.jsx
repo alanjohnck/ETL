@@ -1,27 +1,31 @@
-import { createContext, useState } from "react";
-import { useEffect } from "react";
+import React, { createContext, useState } from 'react';
+
 // Create context
 export const NodeContext = createContext();
 
-// Create a provider component
+// Provider component
 export const NodeProvider = ({ children }) => {
-  const [nodes, setNodes] = useState([]); // Hold all nodes here
+  const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
-  const [selectedNode, setSelectedNode] = useState([]); // New state for the selected node
+  const [selectedNode, setSelectedNode] = useState(null);
 
   const addNode = (node) => {
     const newNode = {
-      ...node,
+      id: node.id ,
+      type: node.type || 'default',
+      position: node.position || { x: 0, y: 0 },
       data: {
-        label: node.label || 'Default Label', // Add a label here
-        image: node.image || 'Image', // Add an image
+        id: node.id,
+        label: node.data?.label || 'Default Label',
+        image: node.data?.image || 'Default Image',
       },
     };
+
     setNodes((prevNodes) => [...prevNodes, newNode]);
   };
-  
+
   return (
-    <NodeContext.Provider value={{ nodes, setNodes, edges,addNode, setEdges, selectedNode, setSelectedNode }}>
+    <NodeContext.Provider value={{ nodes, setNodes, edges, setEdges, addNode, selectedNode, setSelectedNode }}>
       {children}
     </NodeContext.Provider>
   );
