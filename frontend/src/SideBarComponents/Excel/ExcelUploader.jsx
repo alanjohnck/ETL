@@ -52,7 +52,7 @@ function ExcelUploader() {
   // Clear previous data from backend before starting new upload
   const clearPreviousData = async () => {
     try {
-      await fetch('https://etl-t4x8.onrender.com/clear-data', {
+      await fetch('http://35.238.170.141:8080/clear-data', {
         method: 'POST',
       });
     } catch (error) {
