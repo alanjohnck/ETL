@@ -52,7 +52,7 @@ function ExcelUploader() {
   // Clear previous data from backend before starting new upload
   const clearPreviousData = async () => {
     try {
-      await fetch('http://35.238.170.141:8080/clear-data', {
+      await fetch('https://etl-backendocker-915128607140.us-central1.run.app/clear-data', {
         method: 'POST',
       });
     } catch (error) {
@@ -62,7 +62,7 @@ function ExcelUploader() {
 
   const sendDataToServer = async (dataChunk, currentChunk, totalChunks) => {
     try {
-      const response = await fetch('http://35.238.170.141:8080/upload-excel-chunk', {
+      const response = await fetch('https://etl-backendocker-915128607140.us-central1.run.app/upload-excel-chunk', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ data: dataChunk }),
