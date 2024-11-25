@@ -62,7 +62,7 @@ function ExcelUploader() {
 
   const sendDataToServer = async (dataChunk, currentChunk, totalChunks) => {
     try {
-      const response = await fetch('https://etl-t4x8.onrender.com/upload-excel-chunk', {
+      const response = await fetch('http://35.238.170.141/upload-excel-chunk', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ data: dataChunk }),
