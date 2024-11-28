@@ -22,7 +22,7 @@ function ToMssqlDatabase() {
   // Check MSSQL Connection
   const handleConnect = async () => {
     try {
-      const response = await axios.post('https://etl-backendocker-915128607140.us-central1.run.app/check-mssql-connection', {
+      const response = await axios.post('https://etl-latest.onrender.com/check-mssql-connection', {
         username,
         password,
         serverName
@@ -62,7 +62,7 @@ function ToMssqlDatabase() {
     };
     console.log(importDataRequest);
     try {
-      const response = await axios.post('https://etl-backendocker-915128607140.us-central1.run.app/import-data-to-mssql', importDataRequest);
+      const response = await axios.post('https://etl-latest.onrender.com/import-data-to-mssql', importDataRequest);
       setImportStatus(`Import Successful: ${response.data.message}`);
     } catch (error) {
       setImportStatus(`Import Failed: ${error.response?.data?.detail || error.message}`);
