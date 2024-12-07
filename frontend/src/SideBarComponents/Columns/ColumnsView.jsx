@@ -12,7 +12,7 @@ function ColumnsView() {
     { label: 'String', mssqlType: 'VARCHAR(MAX)' },
     { label: 'Integer', mssqlType: 'INT' },
     { label: 'Double', mssqlType: 'FLOAT' },
-    { label: 'Date', mssqlType: 'DATETIME' },
+    { label: 'Date', mssqlType: 'DATE' },
     { label: 'Boolean', mssqlType: 'BIT' },
   ];
 
