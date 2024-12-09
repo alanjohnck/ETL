@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import "./ToMsqlDatabase.css";
 import { ExcelDataContext } from '../../context/ExcelDataContext';
+import { Toaster, toast } from 'sonner'
 
 function ToMssqlDatabase() {
   const [serverName, setServerName] = useState('');
@@ -13,14 +14,15 @@ function ToMssqlDatabase() {
   const [dropAndCreate, setDropAndCreate] = useState(false);
   const [deleteExistingData, setDeleteExistingData] = useState(false);
   const [createIfNotExists, setCreateIfNotExists] = useState(true);
-  const [connectionStatus, setConnectionStatus] = useState('');
   const [databases, setDatabases] = useState([]);
   const [importStatus, setImportStatus] = useState('import data to mssql');
-
+  const [uploading, setUploading] = useState(false);
   const { columnConfig } = useContext(ExcelDataContext);  
 
   // Check MSSQL Connection
   const handleConnect = async () => {
+    const connectingToast = toast.loading('Connecting to database...');
+
     try {
       const response = await axios.post('https://etl-latest.onrender.com/check-mssql-connection', {
         username,
@@ -29,11 +31,16 @@ function ToMssqlDatabase() {
       });
 
       if (response.data.connectionStatus === 'success') {
-        setConnectionStatus('Connected successfully');
         setDatabases(response.data.databases);
+        toast.dismiss(connectingToast);
+        toast.success('Connected successfully');
       }
     } catch (error) {
-      setConnectionStatus(`Connection failed`);
+        toast.dismiss(connectingToast);
+        toast.error('Connection failed',{
+          duration: 5000,
+        });
+     
     }
   };
 
@@ -41,9 +48,10 @@ function ToMssqlDatabase() {
   const handleImportData = async () => {
     if (!columnConfig) {
       setImportStatus("Column configuration is missing.");
+      toast.error('Column configuration is missing');
       return;
     }
-
+    
     const importDataRequest = {
       dbConfig: {
         username,
@@ -60,23 +68,34 @@ function ToMssqlDatabase() {
       },
       columnConfig,
     };
-    console.log(importDataRequest);
+    const connectingToast = toast.loading('Importing to database...');
+    setUploading(true);
     try {
       const response = await axios.post('https://etl-latest.onrender.com/import-data-to-mssql', importDataRequest);
       setImportStatus(`Import Successful: ${response.data.message}`);
+      setUploading(false)
+      toast.dismiss(connectingToast);
+      toast.success('Import Successful');
     } catch (error) {
       setImportStatus(`Import Failed: ${error.response?.data?.detail || error.message}`);
+      setUploading(false)
+      toast.dismiss(connectingToast);
+      toast.error('Import Failed',{
+        duration: 5000,
+      });
     }
   };
 
   useEffect(() => {
     // Reset the connection status and databases when the server name or credentials change
-    setConnectionStatus('');
+   
     setDatabases([]);
   }, [serverName, username, password]);
 
   return (
     <div className="mssqlMainContainer">
+        
+
       <div className="mssqlConnectionForm">
         <h3 className="formHeader">Connection Form</h3>
         <input
@@ -100,10 +119,11 @@ function ToMssqlDatabase() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+         <Toaster position="top-right"  richColors   />
         <button className="primaryButton" onClick={handleConnect}>Connect</button>
+       
       </div>
 
-      {connectionStatus && <p className="statusMessage">{connectionStatus}</p>}
     <div className='mssqlDetailForm'>
       <div className="mssqlDatabases">
         <h4 className="databaseHeader">Available Databases</h4>
@@ -156,8 +176,8 @@ function ToMssqlDatabase() {
         </label>
       </div>
     </div>
-      <button className="primaryButton" onClick={handleImportData}>
-         {importStatus && <p>{importStatus}</p>}
+      <button disabled={uploading}  className="primaryButton" onClick={handleImportData}>
+         {uploading ? 'Importing.' : 'Import Data to MSSQL'}
       </button>
     </div>
   );

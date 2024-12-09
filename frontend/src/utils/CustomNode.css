@@ -1,15 +1,15 @@
 .custom-node {
     padding: 5px;
-    border: 2px solid #ddd;
+    border: 2px solid #2C65B4;
     border-radius: 5px;
-    background-color: white;
+    background-color: #142E52;
     width: auto; /* Adjusted for the image */
     text-align: center;
   }
   
   .node-label {
     font-weight: medium;
-    color:grey ;
+    color:white ;
     font-size: 10px;
     margin-bottom: 10px;
   }
@@ -27,7 +27,7 @@
   }
   
   .handle {
-    background-color: #ddd; /* Optional: Style for the handle */
+    background-color: #52617A; /* Optional: Style for the handle */
     border-radius: 50%;
   }
   

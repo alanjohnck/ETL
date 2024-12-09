@@ -14,8 +14,7 @@ function ExcelUploader() {
   const [excelData, setExcelDataState] = useState([]);
   const [isFileReady, setIsFileReady] = useState(false);
 
-
-  //for resetting the state when is there any other file uploaded after uploading one file
+  // Reset uploader state when new file is uploaded
   const resetUploader = () => {
     setFile(null);
     setWorksheets([]);
@@ -27,9 +26,10 @@ function ExcelUploader() {
     setIsFileReady(false);
   };
 
+  // Handle file upload and extract sheet names
   const handleFileUpload = async (e) => {
-    resetUploader(); // Reset state when new file is selected
-    
+    resetUploader();
+
     const uploadedFile = e.target.files[0];
     if (uploadedFile) {
       setFile(uploadedFile);
@@ -41,7 +41,8 @@ function ExcelUploader() {
       setIsFileReady(true);
     }
   };
-  //for changing the sheet and setting the sheet
+
+  // Handle sheet change
   const handleSheetChange = (e) => {
     const sheetName = e.target.value;
     setSelectedSheet(sheetName);
@@ -49,7 +50,7 @@ function ExcelUploader() {
     setSheetNumber(sheetIndex);
   };
 
-  // Clear previous data from backend before starting new upload
+  // Clear previous data on the server
   const clearPreviousData = async () => {
     try {
       await fetch('https://etl-latest.onrender.com/clear-data', {
@@ -60,6 +61,7 @@ function ExcelUploader() {
     }
   };
 
+  // Send chunk of data to the server
   const sendDataToServer = async (dataChunk, currentChunk, totalChunks) => {
     try {
       const response = await fetch('https://etl-latest.onrender.com/upload-excel-chunk', {
@@ -72,9 +74,6 @@ function ExcelUploader() {
         throw new Error('Failed to upload data chunk');
       }
 
-      const newProgress = Math.round(((currentChunk + 1) / totalChunks) * 100);
-      setProgress(newProgress);
-
       return true;
     } catch (error) {
       console.error('Error uploading data chunk:', error);
@@ -82,6 +81,7 @@ function ExcelUploader() {
     }
   };
 
+  // Upload file and send data in 5MB chunks
   const handleCreateClick = async () => {
     if (!file || !selectedSheet) return;
 
@@ -89,10 +89,10 @@ function ExcelUploader() {
     setProgress(0);
 
     try {
-      // Clear previous data first
       await clearPreviousData();
 
       const fileReader = new FileReader();
+
       fileReader.onload = async () => {
         const arrayBuffer = fileReader.result;
         const workbook = XLSX.read(arrayBuffer);
@@ -102,23 +102,37 @@ function ExcelUploader() {
         setExcelDataState(newJsonData);
         setExcelData(newJsonData);
 
-        const chunkSize = 1000;
-        const totalChunks = Math.ceil(newJsonData.length / chunkSize);
+        const maxChunkSize = 5 * 1024 * 1024; // 5MB in bytes
+        let currentChunk = [];
+        let currentSize = 0;
+        let totalSize = JSON.stringify(newJsonData).length;
+        let chunksSent = 0;
 
-        for (let i = 0; i < totalChunks; i++) {
-          const chunk = newJsonData.slice(i * chunkSize, (i + 1) * chunkSize);
-          const success = await sendDataToServer(chunk, i, totalChunks);
-
-          if (!success) {
-            throw new Error('Upload failed at chunk ' + i);
+        // Function to send a chunk
+        const sendCurrentChunk = async () => {
+          if (currentChunk.length > 0) {
+            const success = await sendDataToServer(currentChunk, chunksSent, Math.ceil(totalSize / maxChunkSize));
+            if (!success) throw new Error('Upload failed at chunk ' + chunksSent);
+            currentChunk = [];
+            currentSize = 0;
+            chunksSent++;
+            setProgress(Math.round((chunksSent * maxChunkSize) / totalSize * 100));
           }
+        };
+
+        for (const row of newJsonData) {
+          const rowSize = JSON.stringify(row).length; // Approximate size of the current row
+          if (currentSize + rowSize > maxChunkSize) {
+            await sendCurrentChunk(); // Send the current chunk when size exceeds 5MB
+          }
+          currentChunk.push(row);
+          currentSize += rowSize;
         }
 
+        // Send any remaining rows
+        await sendCurrentChunk();
         setProgress(100);
-        setTimeout(() => {
-          setUploading(false);
-          setProgress(0);
-        }, 1000);
+        setUploading(false);
       };
 
       fileReader.readAsArrayBuffer(file);
@@ -167,7 +181,7 @@ function ExcelUploader() {
                 className="createButton"
                 disabled={uploading}
               >
-                Upload
+                upload
               </button>
             )}
           </div>
@@ -176,7 +190,7 @@ function ExcelUploader() {
         {uploading && (
           <div className="uploadProgressContainer">
             <div className="progressLabel">
-              {progress === 100 ? 'Upload Complete!' : 'Uploading...'}
+              {progress === 100 ? 'Upload Completed' : 'Uploading...'}
             </div>
             <div className="progressBar">
               <div

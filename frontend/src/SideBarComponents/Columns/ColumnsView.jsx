@@ -1,29 +1,44 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import './ColumnsView.css';
 import { ExcelDataContext } from '../../context/ExcelDataContext';
+import { toast } from 'sonner';
 
 function ColumnsView() {
-  const { excelData } = useContext(ExcelDataContext);
-  const {setColumnConfig} = useContext(ExcelDataContext);
+  const { excelData, setColumnConfig } = useContext(ExcelDataContext);
   const [isConfirmed, setIsConfirmed] = useState(false); // State to track confirmation
+
+  // Ref to track if the toast has been shown
+  const toastShown = useRef(false);
 
   // Define user-friendly and corresponding MSSQL datatype mappings
   const dataTypeOptions = [
     { label: 'String', mssqlType: 'VARCHAR(MAX)' },
     { label: 'Integer', mssqlType: 'INT' },
     { label: 'Double', mssqlType: 'FLOAT' },
-    { label: 'Date', mssqlType: 'DATETIME' },
+    { label: 'Date', mssqlType: 'DATE' },
     { label: 'Boolean', mssqlType: 'BIT' },
   ];
 
   // State to store user-selected datatypes for each column
   const [selectedDataTypes, setSelectedDataTypes] = useState({});
 
-  // Check if excelData is available and has content
-  if (!excelData || excelData.length === 0) return <p className='selectTheData'>No data available.Upload the Excel file</p>;
+  // Guard clause: Show a toast only once if no data is available
+  useEffect(() => {
+    if (!excelData || excelData.length === 0) {
+      if (!toastShown.current) {
+        toast.info('No data available. Select the inputs');
+        toastShown.current = true; // Mark toast as shown
+      }
+    }
+  }, [excelData]); // Only re-run if excelData changes
+
+  // If no data is available, don't render the sidebar
+  if (!excelData || excelData.length === 0) {
+    return null; // This hides the sidebar
+  }
 
   // Extract the header (first row)
-  const headers = excelData[0];
+  const headers = excelData[0] || [];
 
   // Handler for dropdown change
   const handleDataTypeChange = (header, selectedType) => {
@@ -50,7 +65,6 @@ function ColumnsView() {
     console.log('Selected Data Types:', mappedDataTypes);
     setColumnConfig(mappedDataTypes);
     setIsConfirmed(true); // Set confirmation state to true
-
   };
 
   return (
@@ -64,7 +78,6 @@ function ColumnsView() {
             value={selectedDataTypes[header] || 'String'}
             onChange={(e) => handleDataTypeChange(header, e.target.value)}
             disabled={isConfirmed} // Disable the select if confirmed
-
           >
             {dataTypeOptions.map((option) => (
               <option key={option.label} value={option.label}>
