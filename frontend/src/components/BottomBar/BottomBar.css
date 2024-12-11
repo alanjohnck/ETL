@@ -8,27 +8,22 @@
   width: 1000px; /* Set a width larger than the container to enable horizontal scrolling */
   height: 1000px; /* Set a height larger than the container to enable vertical scrolling */
 }
-.selectTheInput {
-  padding: 10px;
-  color: green;
-  background-color: #f8d7da; /* Light red background */
-  border: 1px solid #f5c6cb; /* Red border */
-  border-radius: 4px; /* Rounded corners */
-  margin: 10px 0; /* Margin for spacing */
-  font-weight: bold; /* Bold text */
-  text-align: center; /* Center the text */
-}
+
 table {
   width: 100%;
   border-collapse: collapse;
+  color: white;
+  table-layout: auto; /* Allow the table to adjust column widths based on content */
+  
+
 }
 
 th, td {
-  border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
+  border: 1px solid #132849;
 }
 
 th {
-  background-color: #f2f2f2;
+  background-color: #132849;
 }
