@@ -6,5 +6,6 @@ export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
     include: ['xlsx'],
+    exclude: ['@rollup/rollup-linux-x64-gnu'], // Exclude problematic dependencies
   },
 })

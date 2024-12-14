@@ -10,14 +10,16 @@ export const NodeProvider = ({ children }) => {
   const [selectedNode, setSelectedNode] = useState([]); // New state for the selected node
 
   const addNode = (node) => {
-    const newNode = {
-      ...node,
-      data: {
-        label: node.label || 'Default Label', // Add a label here
-        image: node.image || 'Image', // Add an image
+    setNodes((prevNodes) => [
+      ...prevNodes,
+      {
+        ...node,
+        data: {
+          label: node.data?.label || 'Default Label',
+          image: node.data?.image || 'Image',
+        },
       },
-    };
-    setNodes((prevNodes) => [...prevNodes, newNode]);
+    ]);
   };
   
   return (

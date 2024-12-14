@@ -1,6 +1,6 @@
 .custom-node {
     padding: 5px;
-    border: 2px solid #ddd;
+    border: 2px solid black;
     border-radius: 5px;
     background-color: white;
     width: auto; /* Adjusted for the image */
@@ -9,7 +9,7 @@
   
   .node-label {
     font-weight: medium;
-    color:grey ;
+    color:black;
     font-size: 10px;
     margin-bottom: 10px;
   }
@@ -27,7 +27,7 @@
   }
   
   .handle {
-    background-color: #ddd; /* Optional: Style for the handle */
+    background-color: #52617A; /* Optional: Style for the handle */
     border-radius: 50%;
   }
   

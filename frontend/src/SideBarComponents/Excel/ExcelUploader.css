@@ -2,10 +2,11 @@
 .excelMainContainer {
   display: flex;
   justify-content: center;
-  align-items:start;
-  min-height: 100vh;
-  background-color: #f9f9f9;
+  align-items: start;
   font-family: 'Arial', sans-serif;
+  background-color: white; /* Light bluish background */
+  min-height: 100vh;
+  padding: 20px;
 }
 
 .excelUploader {
@@ -14,44 +15,49 @@
   align-items: start;
   width: 80%;
   max-width: 500px;
-  background-color: #ffffff;
+  background-color: #ffffff; /* Pure white */
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #dbeafe; /* Light blue border */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
 .uploadArea {
-  border: 2px dashed #0000FF;
-  padding: 40px;
+  border: 2px dashed #60a5fa; /* Medium blue border */
+  padding: 30px;
   text-align: center;
   border-radius: 8px;
-  background-color: #f7f7f7;
+  background-color: #f0f8ff; /* Light blue */
   cursor: pointer;
-  margin-bottom: 20px;
+  transition: background-color 0.3s ease;
 }
 
 .uploadArea:hover {
-  background-color: #e9f7e9;
+  background-color: #e0f0ff; /* Lighter blue on hover */
 }
 
 .uploadLabel {
   display: inline-block;
   font-size: 16px;
-  color: #333;
+  color: #1e3a8a; /* Dark blue for text */
+}
+
+.fileInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  width: 100%;
 }
 
 .fileInput {
   display: none;
 }
 
-.fileInfo {
-  text-align: center;
-  width: 100%;
-}
-
 .fileName {
   font-size: 14px;
-  color: #333;
+  color: #1e3a8a; /* Dark blue */
   margin-bottom: 10px;
 }
 
@@ -61,51 +67,40 @@
   margin-top: 10px;
   font-size: 14px;
   border-radius: 5px;
-  border: 1px solid #ddd;
-  background-color: #f5f5f5;
+  border: 1px solid #60a5fa; /* Light blue border */
+  color: #1e3a8a; /* Dark blue */
+  background-color: #f0f8ff; /* Light blue */
 }
 
 .sheetSelect:focus {
   outline: none;
-  border-color: #0000FF;
+  border-color: #3b82f6; /* Brighter blue focus */
 }
+
 /* Button Styles */
 .createButton {
   margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  background-color: #0000FF;
+  padding: 0.5rem 6rem;
+  width: 100%;
+  background-color: #3b82f6; /* Brighter blue */
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 1rem;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .createButton:hover {
-  background-color: #45a049;
+  background-color: #2563eb; /* Slightly darker blue */
 }
 
 .createButton:disabled {
-  background-color: #cccccc;
+  background-color: #93c5fd; /* Muted blue */
   cursor: not-allowed;
 }
 
-.fileInfo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.sheetSelect {
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-  font-size: 1rem;
-  min-width: 200px;
-}
 /* Progress Bar Styles */
 .uploadProgressContainer {
   width: 100%;
@@ -116,25 +111,27 @@
 .progressLabel {
   font-size: 16px;
   margin-bottom: 10px;
+  color: #1e3a8a; /* Dark blue */
 }
 
 .progressBar {
   width: 100%;
   height: 10px;
-  background-color: #f0f0f0;
+  background-color: #dbeafe; /* Very light blue */
   border-radius: 5px;
   margin-bottom: 10px;
 }
 
 .progress {
   height: 100%;
-  background-color: #4caf50;
+  background-color: #3b82f6; /* Brighter blue for progress */
   border-radius: 5px;
+  transition: width 0.3s ease;
 }
 
 .progressPercentage {
   font-size: 14px;
-  color: #333;
+  color: #1e3a8a; /* Dark blue */
 }
 
 @media (max-width: 768px) {
@@ -143,6 +140,6 @@
   }
 
   .uploadArea {
-    padding: 30px;
+    padding: 20px;
   }
 }

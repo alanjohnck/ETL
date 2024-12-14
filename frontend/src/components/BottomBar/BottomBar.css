@@ -2,33 +2,36 @@
   width: 100%;
   height: 200px; /* Adjust the height as needed */
   overflow: auto; /* Enable both vertical and horizontal scrolling */
+  background-color: white; /* Dark blue background for the container */
+  border: 1px solid black; /* Light blue border */
 }
 
 .scrollableContent {
   width: 1000px; /* Set a width larger than the container to enable horizontal scrolling */
   height: 1000px; /* Set a height larger than the container to enable vertical scrolling */
+  background-color: white; /* Consistent dark blue background */
 }
-.selectTheInput {
-  padding: 10px;
-  color: green;
-  background-color: #f8d7da; /* Light red background */
-  border: 1px solid #f5c6cb; /* Red border */
-  border-radius: 4px; /* Rounded corners */
-  margin: 10px 0; /* Margin for spacing */
-  font-weight: bold; /* Bold text */
-  text-align: center; /* Center the text */
-}
+
 table {
   width: 100%;
   border-collapse: collapse;
+  color: white; /* White text for content */
+  table-layout: auto; /* Allow the table to adjust column widths based on content */
+  background-color: #112546; /* Dark blue background for table */
 }
 
 th, td {
-  border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
+  border: 1px solid black; /* Light blue border for cells */
 }
 
 th {
-  background-color: #f2f2f2;
+  background-color: white; /* Slightly lighter dark blue for table headers */
+  color: black; /* White text for table headers */
+}
+
+td {
+  background-color: white; /* Dark blue for table cells */
+  color: black; /* Ensure white text for better readability */
 }

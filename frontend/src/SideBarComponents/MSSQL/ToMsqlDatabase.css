@@ -6,6 +6,8 @@
     width: 100%;
     max-width: 600px;
     margin: 0 auto;
+    color: black;
+    
   }
   
   .mssqlConnectionForm {
@@ -35,12 +37,14 @@
     border-radius: 5px;
     border: 1px solid #ccc;
     font-size: 14px;
+    background-color:white;
+    color:black
   }
   
   .primaryButton {
     width: 100%;
     padding: 10px;
-    background-color: #0000FF;
+    background-color: #3B82E4;
     color: white;
     border: none;
     border-radius: 5px;
@@ -75,7 +79,9 @@
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
-    font-size: 14px;
+    color: black;
+    background-color: white;
+    font-size: black;
   }
   
   .optionsContainer {
@@ -88,5 +94,6 @@
   .checkboxLabel {
     margin-bottom: 10px;
     font-size: 14px;
+    
   }
   
