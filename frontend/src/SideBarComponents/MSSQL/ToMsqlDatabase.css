@@ -6,7 +6,7 @@
     width: 100%;
     max-width: 600px;
     margin: 0 auto;
-    color: white;
+    color: black;
     
   }
   
@@ -37,8 +37,8 @@
     border-radius: 5px;
     border: 1px solid #ccc;
     font-size: 14px;
-    background-color:#0F1A32;
-    color:white
+    background-color:white;
+    color:black
   }
   
   .primaryButton {
@@ -79,9 +79,9 @@
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
-    color: white;
-    background-color: #0F1A32;
-    font-size: 14px;
+    color: black;
+    background-color: white;
+    font-size: black;
   }
   
   .optionsContainer {

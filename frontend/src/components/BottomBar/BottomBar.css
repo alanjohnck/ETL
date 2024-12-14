@@ -2,28 +2,36 @@
   width: 100%;
   height: 200px; /* Adjust the height as needed */
   overflow: auto; /* Enable both vertical and horizontal scrolling */
+  background-color: white; /* Dark blue background for the container */
+  border: 1px solid black; /* Light blue border */
 }
 
 .scrollableContent {
   width: 1000px; /* Set a width larger than the container to enable horizontal scrolling */
   height: 1000px; /* Set a height larger than the container to enable vertical scrolling */
+  background-color: white; /* Consistent dark blue background */
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  color: white;
+  color: white; /* White text for content */
   table-layout: auto; /* Allow the table to adjust column widths based on content */
-  
-
+  background-color: #112546; /* Dark blue background for table */
 }
 
 th, td {
   padding: 8px;
   text-align: left;
-  border: 1px solid #132849;
+  border: 1px solid black; /* Light blue border for cells */
 }
 
 th {
-  background-color: #132849;
+  background-color: white; /* Slightly lighter dark blue for table headers */
+  color: black; /* White text for table headers */
+}
+
+td {
+  background-color: white; /* Dark blue for table cells */
+  color: black; /* Ensure white text for better readability */
 }

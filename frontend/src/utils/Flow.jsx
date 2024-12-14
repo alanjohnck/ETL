@@ -95,7 +95,7 @@ function Flow() {
         proOptions={proOptions}
       >
         <Controls />
-        <Background color="#162B4C" gap={26} size={3} />
+        <Background color="white" gap={26} size={3} />
       </ReactFlow>
     </div>
   );
