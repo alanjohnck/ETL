@@ -5,19 +5,33 @@ import { ExcelDataContext } from '../../context/ExcelDataContext';
 import { Toaster, toast } from 'sonner'
 
 function ToMssqlDatabase() {
-  const [serverName, setServerName] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [databaseName, setDatabaseName] = useState('');
-  const [schemaName, setSchemaName] = useState('dbo');
-  const [tableName, setTableName] = useState('');
-  const [dropAndCreate, setDropAndCreate] = useState(false);
-  const [deleteExistingData, setDeleteExistingData] = useState(false);
-  const [createIfNotExists, setCreateIfNotExists] = useState(true);
+  // Initialize state with values from localStorage if they exist
+  const [serverName, setServerName] = useState(() => localStorage.getItem('mssql_serverName') || '');
+  const [username, setUsername] = useState(() => localStorage.getItem('mssql_username') || '');
+  const [password, setPassword] = useState(() => localStorage.getItem('mssql_password') || '');
+  const [databaseName, setDatabaseName] = useState(() => localStorage.getItem('mssql_databaseName') || '');
+  const [schemaName, setSchemaName] = useState(() => localStorage.getItem('mssql_schemaName') || 'dbo');
+  const [tableName, setTableName] = useState(() => localStorage.getItem('mssql_tableName') || '');
+  const [dropAndCreate, setDropAndCreate] = useState(() => localStorage.getItem('mssql_dropAndCreate') === 'true');
+  const [deleteExistingData, setDeleteExistingData] = useState(() => localStorage.getItem('mssql_deleteExistingData') === 'true');
+  const [createIfNotExists, setCreateIfNotExists] = useState(() => localStorage.getItem('mssql_createIfNotExists') === 'true' || true);
   const [databases, setDatabases] = useState([]);
   const [importStatus, setImportStatus] = useState('import data to mssql');
   const [uploading, setUploading] = useState(false);
-  const { columnConfig } = useContext(ExcelDataContext);  
+  const { columnConfig } = useContext(ExcelDataContext);
+
+  // Save form data to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('mssql_serverName', serverName);
+    localStorage.setItem('mssql_username', username);
+    localStorage.setItem('mssql_password', password);
+    localStorage.setItem('mssql_databaseName', databaseName);
+    localStorage.setItem('mssql_schemaName', schemaName);
+    localStorage.setItem('mssql_tableName', tableName);
+    localStorage.setItem('mssql_dropAndCreate', dropAndCreate);
+    localStorage.setItem('mssql_deleteExistingData', deleteExistingData);
+    localStorage.setItem('mssql_createIfNotExists', createIfNotExists);
+  }, [serverName, username, password, databaseName, schemaName, tableName, dropAndCreate, deleteExistingData, createIfNotExists]);
 
   // Check MSSQL Connection
   const handleConnect = async () => {
@@ -37,10 +51,9 @@ function ToMssqlDatabase() {
       }
     } catch (error) {
         toast.dismiss(connectingToast);
-        toast.error('Connection failed',{
+        toast.error('Connection failed', {
           duration: 5000,
         });
-     
     }
   };
 
@@ -80,7 +93,7 @@ function ToMssqlDatabase() {
       setImportStatus(`Import Failed: ${error.response?.data?.detail || error.message}`);
       setUploading(false)
       toast.dismiss(connectingToast);
-      toast.error('Import Failed',{
+      toast.error('Import Failed', {
         duration: 5000,
       });
     }
@@ -88,14 +101,11 @@ function ToMssqlDatabase() {
 
   useEffect(() => {
     // Reset the connection status and databases when the server name or credentials change
-   
     setDatabases([]);
   }, [serverName, username, password]);
 
   return (
     <div className="mssqlMainContainer">
-        
-
       <div className="mssqlConnectionForm">
         <h3 className="formHeader">Connection Form</h3>
         <input
@@ -119,65 +129,64 @@ function ToMssqlDatabase() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-         <Toaster position="top-right"  richColors   />
+        <Toaster position="top-right" richColors />
         <button className="primaryButton" onClick={handleConnect}>Connect</button>
-       
       </div>
 
-    <div className='mssqlDetailForm'>
-      <div className="mssqlDatabases">
-        <h4 className="databaseHeader">Available Databases</h4>
-        <select
-          className="selectField"
-          onChange={(e) => setDatabaseName(e.target.value)}
-          value={databaseName}
-        >
-          <option value="">Select Database</option>
-          {databases.map((db, index) => (
-            <option key={index} value={db}>{db}</option>
-          ))}
-        </select>
+      <div className='mssqlDetailForm'>
+        <div className="mssqlDatabases">
+          <h4 className="databaseHeader">Available Databases</h4>
+          <select
+            className="selectField"
+            onChange={(e) => setDatabaseName(e.target.value)}
+            value={databaseName}
+          >
+            <option value="">Select Database</option>
+            {databases.map((db, index) => (
+              <option key={index} value={db}>{db}</option>
+            ))}
+          </select>
+        </div>
+
+        <input
+          className="inputField"
+          type="text"
+          placeholder="Enter Table Name"
+          value={tableName}
+          onChange={(e) => setTableName(e.target.value)}
+        />
+
+        <div className="optionsContainer">
+          <label className="checkboxLabel">
+            <input
+              type="checkbox"
+              checked={dropAndCreate}
+              onChange={(e) => setDropAndCreate(e.target.checked)}
+            />
+            Drop and Create Table
+          </label>
+
+          <label className="checkboxLabel">
+            <input
+              type="checkbox"
+              checked={deleteExistingData}
+              onChange={(e) => setDeleteExistingData(e.target.checked)}
+            />
+            Delete Existing Data
+          </label>
+
+          <label className="checkboxLabel">
+            <input
+              type="checkbox"
+              checked={createIfNotExists}
+              onChange={(e) => setCreateIfNotExists(e.target.checked)}
+            />
+            Create If Not Exists
+          </label>
+        </div>
       </div>
-
-      <input
-        className="inputField"
-        type="text"
-        placeholder="Enter Table Name"
-        value={tableName}
-        onChange={(e) => setTableName(e.target.value)}
-      />
-
-      <div className="optionsContainer">
-        <label className="checkboxLabel">
-          <input
-            type="checkbox"
-            checked={dropAndCreate}
-            onChange={(e) => setDropAndCreate(e.target.checked)}
-          />
-          Drop and Create Table
-        </label>
-
-        <label className="checkboxLabel">
-          <input
-            type="checkbox"
-            checked={deleteExistingData}
-            onChange={(e) => setDeleteExistingData(e.target.checked)}
-          />
-          Delete Existing Data
-        </label>
-
-        <label className="checkboxLabel">
-          <input
-            type="checkbox"
-            checked={createIfNotExists}
-            onChange={(e) => setCreateIfNotExists(e.target.checked)}
-          />
-          Create If Not Exists
-        </label>
-      </div>
-    </div>
-      <button disabled={uploading}  className="primaryButton" onClick={handleImportData}>
-         {uploading ? 'Importing.' : 'Import Data to MSSQL'}
+      <button disabled={uploading} className="primaryButton" onClick={handleImportData}>
+        {uploading ? 'Importing.' : 'Import Data to MSSQL'}
       </button>
     </div>
   );
