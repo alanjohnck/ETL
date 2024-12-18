@@ -46,7 +46,15 @@
     border-radius: 5px;
     cursor: pointer;
   }
+  .primaryButton:hover {
+    background-color: #0056b3; /* Slightly darker blue on hover */
+    transform: scale(1.05); /* Slight zoom effect */
+  }
   
+  .primaryButton:active {
+    background-color: #003d80; /* Even darker blue when pressed */
+    transform: scale(0.98); /* Slight shrink effect on click */
+  }
   .statusMessage {
     margin-top: 10px;
     color: #19f024;
