@@ -7,10 +7,7 @@ import { NodeContext } from '../../context/NodeContext';
 
 function Sidebar() {
   const { selectedNode, edges } = useContext(NodeContext);
-
-  useEffect(() => {
-    console.log(edges);
-  }, [edges]);
+;
 
   const isEdgeFromExcelToColumns = () => {
     return edges.some(edge => edge.source === 'excel' && edge.target === 'columns');
@@ -28,7 +25,7 @@ function Sidebar() {
         isEdgeFromExcelToColumns() ? (
           <ColumnsView />
         ) : (
-          <p>Please connect the Excel node to the Columns node.</p>
+          <p className='info-message'>Please connect the Excel node to the Columns node.</p>
         )
       )}
       {selectedNode && selectedNode.data.label === 'MSSQL' && (
@@ -36,7 +33,7 @@ function Sidebar() {
 
         <ToMsqlDatabase />
         ) : (
-          <p>Please connect the Columns node to the MSSQL node.</p>
+          <p className='info-message'>Please connect the Columns node to the MSSQL node.</p>
 
         )  
       )

@@ -4,3 +4,14 @@
     padding: 0;
    
 }
+.info-message {
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 10px 0;
+    text-align: center;
+    background-color: #f0f8ff; /* Light blue background */
+    color: #333; /* Dark text color */
+    border: 1px solid #add8e6; /* Light blue border */
+  }

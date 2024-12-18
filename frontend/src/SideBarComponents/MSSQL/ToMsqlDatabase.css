@@ -89,4 +89,52 @@
     margin-bottom: 10px;
     font-size: 14px;
   }
+  .infoBox {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    text-align: center;
+  }
   
+  .infoBox.success {
+    background-color: #e6ffed;
+    color: #28a745;
+    border: 1px solid #28a745;
+  }
+  
+  .infoBox.error {
+    background-color: #ffebeb;
+    color: #dc3545;
+    border: 1px solid #dc3545;
+  }
+  /* Style for the checkbox container */
+.checkboxContainer {
+  display: flex;
+  align-items: center; /* Align vertically in the center */
+  margin-bottom: 10px; /* Add spacing between each checkbox */
+  margin-top: 10px;
+}
+
+/* Style for the input checkboxes */
+.checkboxContainer input[type="checkbox"] {
+  margin-right: 10px; /* Add spacing between the checkbox and the label */
+  width: 16px;
+  height: 16px;
+}
+
+/* Style for labels */
+.checkboxContainer label {
+  font-size: 14px;
+  color: #333; /* Darker text for better readability */
+}
+.inputField{
+ 
+  padding: 10px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}

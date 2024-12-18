@@ -1,34 +1,33 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import './ColumnsView.css';
 import { ExcelDataContext } from '../../context/ExcelDataContext';
 
 function ColumnsView() {
-  const { excelData } = useContext(ExcelDataContext);
-  const {setColumnConfig} = useContext(ExcelDataContext);
+  const { excelData, selectedDataTypes, setSelectedDataTypes, setColumnConfig } = useContext(ExcelDataContext);
+
   // Define user-friendly and corresponding MSSQL datatype mappings
   const dataTypeOptions = [
     { label: 'String', mssqlType: 'VARCHAR(MAX)' },
     { label: 'Integer', mssqlType: 'INT' },
     { label: 'Double', mssqlType: 'FLOAT' },
-    { label: 'Date', mssqlType: 'DATETIME' },
+    { label: 'Date', mssqlType: 'DATE' },
     { label: 'Boolean', mssqlType: 'BIT' },
   ];
 
-  // State to store user-selected datatypes for each column
-  const [selectedDataTypes, setSelectedDataTypes] = useState({});
-
   // Check if excelData is available and has content
-  if (!excelData || excelData.length === 0) return <p>No data available</p>;
+  if (!excelData || excelData.length === 0) return <p className='info-message'>No data available</p>;
 
   // Extract the header (first row)
   const headers = excelData[0];
 
   // Handler for dropdown change
   const handleDataTypeChange = (header, selectedType) => {
-    setSelectedDataTypes((prevSelected) => ({
-      ...prevSelected,
-      [header]: selectedType,
-    }));
+    setSelectedDataTypes((prevSelected) => {
+      const updatedDataTypes = { ...prevSelected, [header]: selectedType };
+      // Automatically save data when a new data type is selected
+      updateColumnConfig(updatedDataTypes);
+      return updatedDataTypes;
+    });
   };
 
   // Function to get the MSSQL data type
@@ -37,17 +36,20 @@ function ColumnsView() {
     return selectedOption ? selectedOption.mssqlType : 'VARCHAR(MAX)';
   };
 
-  // Function to log selected headers and MSSQL datatypes
-  const handleConfirm = () => {
+  // Function to automatically update column configuration
+  const updateColumnConfig = (updatedDataTypes) => {
     const mappedDataTypes = headers.map((header) => ({
       header: header,
-      userSelected: selectedDataTypes[header] || 'String',
-      mssqlType: getMssqlType(selectedDataTypes[header] || 'String'),
+      userSelected: updatedDataTypes[header] || 'String',
+      mssqlType: getMssqlType(updatedDataTypes[header] || 'String'),
     }));
-
-    console.log('Selected Data Types:', mappedDataTypes);
     setColumnConfig(mappedDataTypes);
   };
+
+  useEffect(() => {
+    // Initialize the column config based on the current selectedDataTypes state
+    updateColumnConfig(selectedDataTypes);
+  }, [selectedDataTypes, headers, setColumnConfig]);
 
   return (
     <div className='columnSideBarContainer'>
@@ -68,10 +70,6 @@ function ColumnsView() {
           </select>
         </div>
       ))}
-
-      <button className='confirm-button' onClick={handleConfirm}>
-        Confirm Selection
-      </button>
     </div>
   );
 }

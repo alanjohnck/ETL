@@ -18,11 +18,15 @@ const Navbar = () => {
     { id: 'mssql', icon: '📤', image: './mssql.png', label: 'MSSQL' },
   ];
 
+  const handleOptionDragged = () => {
+    setActiveTab(''); // Reset the active tab when an option is dragged or selected
+  };
+
   const renderDropdownMenu = (options) => (
     <div className="dropdown-menu">
       <div className="input-options-grid">
         {options.map((option) => (
-          <DraggableOption key={option.id} option={option} />
+          <DraggableOption key={option.id} option={option} onDrag={handleOptionDragged} />
         ))}
       </div>
     </div>
@@ -60,12 +64,16 @@ const Navbar = () => {
   );
 };
 
-const DraggableOption = ({ option }) => {
+const DraggableOption = ({ option, onDrag }) => {
   const [, dragRef] = useDrag(() => ({
     type: 'node',
     item: option,
+    end: () => {
+      // This triggers when the drag action ends
+      onDrag(); // Notify the parent to close the dropdown
+    },
   }));
-  // setActiveTab(" ")
+
   return (
     <button ref={dragRef} className="input-option">
       <span className="option-icon">{option.icon}</span>

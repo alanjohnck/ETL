@@ -1,68 +1,112 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { ExcelDataContext } from '../../context/ExcelDataContext';
 import './ExcelUploader.css';
 import * as XLSX from 'xlsx';
 
 function ExcelUploader() {
-  const { setExcelData } = useContext(ExcelDataContext);
-  const [file, setFile] = useState(null);
-  const [worksheets, setWorksheets] = useState([]);
-  const [selectedSheet, setSelectedSheet] = useState('');
-  const [sheetNumber, setSheetNumber] = useState(0);
-  const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [excelData, setExcelDataState] = useState([]);
-  const [isFileReady, setIsFileReady] = useState(false);
+  const { 
+    setExcelData,
+    uploadState,
+    setUploadState
+  } = useContext(ExcelDataContext);
 
+  const MAX_CHUNK_SIZE_MB = 5 * 1024 * 1024; // 5MB in bytes
 
-  //for resetting the state when is there any other file uploaded after uploading one file
+  // Reset uploader state
   const resetUploader = () => {
-    setFile(null);
-    setWorksheets([]);
-    setSelectedSheet('');
-    setSheetNumber(0);
-    setUploading(false);
-    setProgress(0);
-    setExcelDataState([]);
-    setIsFileReady(false);
+    setUploadState({
+      file: null,
+      worksheets: [],
+      selectedSheet: '',
+      sheetNumber: 0,
+      uploading: false,
+      progress: 0,
+      isFileReady: false
+    });
   };
 
+  // Handle file upload
   const handleFileUpload = async (e) => {
-    resetUploader(); // Reset state when new file is selected
-    
+    resetUploader();
     const uploadedFile = e.target.files[0];
+    
     if (uploadedFile) {
-      setFile(uploadedFile);
-      const data = await uploadedFile.arrayBuffer();
-      const workbook = XLSX.read(data);
-      setWorksheets(workbook.SheetNames);
-      setSelectedSheet(workbook.SheetNames[0]);
-      setSheetNumber(0);
-      setIsFileReady(true);
+      try {
+        const data = await uploadedFile.arrayBuffer();
+        const workbook = XLSX.read(data);
+
+        setUploadState(prev => ({
+          ...prev,
+          file: uploadedFile,
+          worksheets: workbook.SheetNames,
+          selectedSheet: workbook.SheetNames[0],
+          sheetNumber: 0,
+          isFileReady: true
+        }));
+      } catch (error) {
+        console.error('Error reading file:', error);
+        // You might want to show an error message to the user here
+      }
     }
   };
-  //for changing the sheet and setting the sheet
+
+  // Handle worksheet selection
   const handleSheetChange = (e) => {
     const sheetName = e.target.value;
-    setSelectedSheet(sheetName);
-    const sheetIndex = worksheets.findIndex((sheet) => sheet === sheetName);
-    setSheetNumber(sheetIndex);
+    const sheetIndex = uploadState.worksheets.findIndex((sheet) => sheet === sheetName);
+    
+    setUploadState(prev => ({
+      ...prev,
+      selectedSheet: sheetName,
+      sheetNumber: sheetIndex
+    }));
   };
 
-  // Clear previous data from backend before starting new upload
+  // Clear previous data from the server
   const clearPreviousData = async () => {
     try {
-      await fetch('https://etl-t4x8.onrender.com/clear-data', {
+      const response = await fetch('https://etl-latest.onrender.com/clear-data', {
         method: 'POST',
       });
+      if (!response.ok) {
+        throw new Error('Failed to clear previous data');
+      }
     } catch (error) {
       console.error('Error clearing previous data:', error);
+      throw error;
     }
   };
 
+  // Calculate chunk sizes for data upload
+  const calculateChunkSize = (data, maxChunkSize) => {
+    const chunks = [];
+    let currentChunk = [];
+    let currentSize = 0;
+
+    for (const row of data) {
+      const rowSize = new Blob([JSON.stringify(row)]).size;
+
+      if (currentSize + rowSize > maxChunkSize) {
+        chunks.push(currentChunk);
+        currentChunk = [row];
+        currentSize = rowSize;
+      } else {
+        currentChunk.push(row);
+        currentSize += rowSize;
+      }
+    }
+
+    if (currentChunk.length > 0) {
+      chunks.push(currentChunk);
+    }
+
+    return chunks;
+  };
+
+  // Send data chunk to server
   const sendDataToServer = async (dataChunk, currentChunk, totalChunks) => {
     try {
-      const response = await fetch('https://etl-t4x8.onrender.com/upload-excel-chunk', {
+      const response = await fetch('https://etl-latest.onrender.com/upload-excel-chunk', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ data: dataChunk }),
@@ -73,7 +117,10 @@ function ExcelUploader() {
       }
 
       const newProgress = Math.round(((currentChunk + 1) / totalChunks) * 100);
-      setProgress(newProgress);
+      setUploadState(prev => ({
+        ...prev,
+        progress: newProgress
+      }));
 
       return true;
     } catch (error) {
@@ -82,50 +129,72 @@ function ExcelUploader() {
     }
   };
 
+  // Handle the create/upload button click
   const handleCreateClick = async () => {
-    if (!file || !selectedSheet) return;
+    if (!uploadState.file || !uploadState.selectedSheet) return;
 
-    setUploading(true);
-    setProgress(0);
+    setUploadState(prev => ({
+      ...prev,
+      uploading: true,
+      progress: 0
+    }));
 
     try {
-      // Clear previous data first
       await clearPreviousData();
 
       const fileReader = new FileReader();
+      
       fileReader.onload = async () => {
-        const arrayBuffer = fileReader.result;
-        const workbook = XLSX.read(arrayBuffer);
-        const worksheet = workbook.Sheets[worksheets[sheetNumber]];
-        const newJsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+        try {
+          const arrayBuffer = fileReader.result;
+          const workbook = XLSX.read(arrayBuffer);
+          const worksheet = workbook.Sheets[uploadState.worksheets[uploadState.sheetNumber]];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
 
-        setExcelDataState(newJsonData);
-        setExcelData(newJsonData);
+          setExcelData(jsonData);
 
-        const chunkSize = 1000;
-        const totalChunks = Math.ceil(newJsonData.length / chunkSize);
+          const chunks = calculateChunkSize(jsonData, MAX_CHUNK_SIZE_MB);
+          const totalChunks = chunks.length;
 
-        for (let i = 0; i < totalChunks; i++) {
-          const chunk = newJsonData.slice(i * chunkSize, (i + 1) * chunkSize);
-          const success = await sendDataToServer(chunk, i, totalChunks);
-
-          if (!success) {
-            throw new Error('Upload failed at chunk ' + i);
+          for (let i = 0; i < totalChunks; i++) {
+            const success = await sendDataToServer(chunks[i], i, totalChunks);
+            if (!success) {
+              throw new Error('Upload failed at chunk ' + i);
+            }
           }
-        }
 
-        setProgress(100);
-        setTimeout(() => {
-          setUploading(false);
-          setProgress(0);
-        }, 1000);
+          // Set progress to 100% when complete
+          setUploadState(prev => ({
+            ...prev,
+            progress: 100
+          }));
+
+          // Reset upload state after successful completion
+          setTimeout(() => {
+            setUploadState(prev => ({
+              ...prev,
+              uploading: false,
+              progress: 0
+            }));
+          }, 1000);
+        } catch (error) {
+          console.error('Error processing file:', error);
+          setUploadState(prev => ({
+            ...prev,
+            uploading: false,
+            progress: 0
+          }));
+        }
       };
 
-      fileReader.readAsArrayBuffer(file);
+      fileReader.readAsArrayBuffer(uploadState.file);
     } catch (error) {
       console.error('Upload process failed:', error);
-      setUploading(false);
-      setProgress(0);
+      setUploadState(prev => ({
+        ...prev,
+        uploading: false,
+        progress: 0
+      }));
     }
   };
 
@@ -146,26 +215,26 @@ function ExcelUploader() {
           </label>
         </div>
 
-        {file && (
+        {uploadState.file && (
           <div className="fileInfo">
-            <p className="fileName">Selected file: {file.name}</p>
+            <p className="fileName">Selected file: {uploadState.file.name}</p>
             <select
-              value={selectedSheet}
+              value={uploadState.selectedSheet}
               onChange={handleSheetChange}
               className="sheetSelect"
             >
-              {worksheets.map((sheet, index) => (
+              {uploadState.worksheets.map((sheet, index) => (
                 <option key={index} value={sheet}>
                   {sheet}
                 </option>
               ))}
             </select>
-            
-            {isFileReady && (
+
+            {uploadState.isFileReady && (
               <button
                 onClick={handleCreateClick}
                 className="createButton"
-                disabled={uploading}
+                disabled={uploadState.uploading}
               >
                 Upload
               </button>
@@ -173,18 +242,18 @@ function ExcelUploader() {
           </div>
         )}
 
-        {uploading && (
+        {uploadState.uploading && (
           <div className="uploadProgressContainer">
             <div className="progressLabel">
-              {progress === 100 ? 'Upload Complete!' : 'Uploading...'}
+              {uploadState.progress === 100 ? 'Upload Complete!' : 'Uploading...'}
             </div>
             <div className="progressBar">
               <div
                 className="progress"
-                style={{ width: `${progress}%` }}
+                style={{ width: `${uploadState.progress}%` }}
               ></div>
             </div>
-            <p className="progressPercentage">{progress}%</p>
+            <p className="progressPercentage">{uploadState.progress}%</p>
           </div>
         )}
       </div>

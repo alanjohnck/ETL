@@ -15,6 +15,7 @@ import CustomNode from '../utils/CustomNode';
 const Flow = () => {
   const { nodes, setNodes, edges, setEdges,selectedNode, addNode,setSelectedNode } = useContext(NodeContext);
   const dropRef = useRef(null); // Ref for the drop zone
+  const proOptions = { hideAttribution: true };
 
   const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -74,9 +75,7 @@ const Flow = () => {
   };
   const onNodeClick = (_, node) => {
     setSelectedNode(node);
-    console.log(edges);
-    console.log(nodes);
-    console.log(selectedNode);
+
   };
   return (
     <div ref={dropRef} style={{ width: '100%', height: '100%' }}>
@@ -88,6 +87,7 @@ const Flow = () => {
         onConnect={onConnect}
         nodeTypes={nodeTypes}
         onNodeClick={onNodeClick}
+        proOptions={proOptions}
       >
         <Controls />
         <Background variant="lines" color="#fff" gap={26} size={3} />
